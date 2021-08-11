@@ -1,7 +1,10 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import * as Web3 from 'web3'
+import { OpenSeaPort, Network } from 'opensea-js'
+import { OpenSeaAsset } from 'opensea-js/lib/types'
 
-export default function Home() {
+export default function Home({ assets }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -15,6 +18,11 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
+          <ul>
+            {assets.map((data: OpenSeaAsset) => {
+              return <li><img src={data.imageUrl}></img></li>
+            })}
+          </ul>
         </p>
       </main>
 
@@ -30,4 +38,18 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export async function getServerSideProps() {
+  const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
+
+  const seaport = new OpenSeaPort(provider, {
+    networkName: Network.Main
+  })
+  const cryptpunkAssets = await seaport.api.getAssets({ limit: 2 })
+  return {
+    props: {
+      assets: JSON.parse(JSON.stringify(cryptpunkAssets.assets))
+    }
+  }
 }
