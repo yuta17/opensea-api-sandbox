@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import * as Web3 from 'web3'
-import { OpenSeaPort, Network } from 'opensea-js'
+import { openseaClient } from './api/opensea/client'
 import { OpenSeaAsset } from 'opensea-js/lib/types'
 
 export default function Home({ assets }) {
@@ -41,12 +40,7 @@ export default function Home({ assets }) {
 }
 
 export async function getServerSideProps() {
-  const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
-
-  const seaport = new OpenSeaPort(provider, {
-    networkName: Network.Main
-  })
-  const cryptpunkAssets = await seaport.api.getAssets({ limit: 2 })
+  const cryptpunkAssets = await openseaClient.api.getAssets({ limit: 2 })
   return {
     props: {
       assets: JSON.parse(JSON.stringify(cryptpunkAssets.assets))
