@@ -19,7 +19,13 @@ export default function Home({ assets }) {
         <p className={styles.description}>
           <ul>
             {assets.map((data: OpenSeaAsset) => {
-              return <li><img src={data.imageUrl}></img></li>
+              return <li>
+                <img src={data.imageUrl}></img>
+                <p>{data.name}</p>
+                <a href={data.openseaLink} target="_blank">opensea Link</a>
+                <p>ownerName: {data.owner.user.username}</p>
+                <p>tokenId: {data.tokenId}</p>
+              </li>
             })}
           </ul>
         </p>
@@ -40,10 +46,23 @@ export default function Home({ assets }) {
 }
 
 export async function getServerSideProps() {
-  const cryptpunkAssets = await openseaClient.api.getAssets({ limit: 2 })
+  const cryptpunkAssets = await openseaClient.api.getAssets({ search: 'CryptoPunks' })
   return {
     props: {
       assets: JSON.parse(JSON.stringify(cryptpunkAssets.assets))
     }
   }
 }
+
+// getAssets Query
+
+// export interface OpenSeaAssetQuery {
+//     owner?: string;
+//     asset_contract_address?: string;
+//     token_ids?: Array<number | string>;
+//     search?: string;
+//     order_by?: string;
+//     order_direction?: string;
+//     limit?: number;
+//     offset?: number;
+// }
